@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors - generates bg-armor-900, text-frame-500, etc. */
+  --color-armor-900: #050505;
+  --color-armor-800: #111111;
+  --color-armor-700: #1A1A1C;
+  --color-armor-600: #242427;
+  
+  --color-frame-300: #FBE897;
+  --color-frame-400: #F0D05E;
+  --color-frame-500: #D4AF37;
+  --color-frame-600: #B5952F;
+  --color-frame-700: #8A7120;
+  
+  --color-decal-500: #C21807;
+  --color-decal-600: #991104;
+  
+  --color-weapon-400: #8C92AC;
+  --color-weapon-500: #5C627A;
+  --color-weapon-800: #2A2C36;
+
+  /* Fonts - generates font-mecha, font-ui */
+  --font-mecha: 'Chakra Petch', sans-serif;
+  --font-ui: 'Rajdhani', sans-serif;
+
+  /* Font Sizes - generates text-xs, text-sm, etc. */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+
+  /* Border Radius - generates rounded-sm, rounded-md, etc. */
+  --radius-none: 0px;
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.5rem;
+  
+  /* Spacing - generates p-cutout-sm, m-cutout-md, etc. */
+  --spacing-cutout-sm: 0.5rem;
+  --spacing-cutout-md: 1rem;
+  --spacing-cutout-lg: 1.5rem;
+
+  /* Box Shadows - generates shadow-glow-gold, etc. */
+  --shadow-glow-gold: 0 0 10px rgba(212, 175, 55, 0.4), 0 0 20px rgba(212, 175, 55, 0.2);
+  --shadow-glow-crimson: 0 0 12px rgba(194, 24, 7, 0.6);
+  --shadow-glow-gunmetal: 0 0 15px rgba(92, 98, 122, 0.3);
+}
