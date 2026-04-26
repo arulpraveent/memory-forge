@@ -1,8 +1,23 @@
 <script setup lang="ts">
 const authStore = useAuthStore()
 const route = useRoute()
+const supabase = useSupabaseClient()
 
 const loadingLogout = ref(false)
+const displayName = ref('')
+
+onMounted(async () => {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return
+
+  const { data } = await supabase
+    .from('profiles')
+    .select('display_name')
+    .eq('id', user.id)
+    .single()
+
+  displayName.value = data?.display_name ?? user.email ?? ''
+})
 
 async function handleLogout() {
   loadingLogout.value = true
@@ -53,6 +68,9 @@ async function handleLogout() {
             </span>
           </NuxtLink>
         </nav>
+
+        <!-- Pilot Callsign -->
+        <DisplayName v-if="displayName" :name="displayName" />
 
         <!-- Logout -->
         <button
