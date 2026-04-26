@@ -16,6 +16,7 @@ export function useReview(deckId: string) {
   const revealed = ref(false)
   const sessionIndex = ref(0)
   const sessionCards = ref<Card[]>([])
+  const scheduleMap = ref<Record<number, string>>({})
 
   const currentCard = computed(() => sessionCards.value[sessionIndex.value] ?? null)
   const isComplete = computed(() => sessionCards.value.length > 0 && sessionIndex.value >= sessionCards.value.length)
@@ -27,6 +28,7 @@ export function useReview(deckId: string) {
   async function init() {
     loading.value = true
     error.value = ''
+    scheduleMap.value = {}
     try {
       await cardStore.fetchDueCards(deckId)
       sessionCards.value = [...cardStore.dueCards]
@@ -42,8 +44,19 @@ export function useReview(deckId: string) {
     }
   }
 
+  async function fetchSchedule() {
+    if (!currentCard.value) return
+    try {
+      scheduleMap.value = await $fetch<Record<number, string>>(`/api/cards/${currentCard.value.id}/schedule`)
+    }
+    catch {
+      scheduleMap.value = {}
+    }
+  }
+
   function reveal() {
     revealed.value = true
+    void fetchSchedule()
   }
 
   async function rate(rating: 1 | 2 | 3 | 4) {
@@ -57,6 +70,7 @@ export function useReview(deckId: string) {
       })
       sessionIndex.value++
       revealed.value = false
+      scheduleMap.value = {}
     }
     catch (e: unknown) {
       const err = e as { data?: { message?: string }; message?: string }
@@ -67,5 +81,5 @@ export function useReview(deckId: string) {
     }
   }
 
-  return { loading, submitting, error, revealed, currentCard, isComplete, progress, sessionCards, init, reveal, rate }
+  return { loading, submitting, error, revealed, currentCard, isComplete, progress, sessionCards, scheduleMap, init, reveal, rate }
 }

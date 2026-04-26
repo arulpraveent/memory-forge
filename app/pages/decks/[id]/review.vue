@@ -6,17 +6,31 @@ const deckId = route.params.id as string
 
 const { data: deck } = await useFetch(`/api/decks/${deckId}`)
 
-const { loading, submitting, error, revealed, currentCard, isComplete, progress, sessionCards, init, reveal, rate } = useReview(deckId)
+const { loading, submitting, error, revealed, currentCard, isComplete, progress, sessionCards, scheduleMap, init, reveal, rate } = useReview(deckId)
 
 const progressPct = computed(() =>
   sessionCards.value.length === 0 ? 0 : ((progress.value.current - 1) / sessionCards.value.length) * 100,
 )
 
+function formatDue(iso: string | undefined): string {
+  if (!iso) return '···'
+  const diff = new Date(iso).getTime() - Date.now()
+  const mins = Math.round(diff / 60000)
+  if (mins < 1) return '<1m'
+  if (mins < 60) return `${mins}m`
+  const hours = Math.round(diff / 3600000)
+  if (hours < 24) return `${hours}h`
+  const days = Math.round(diff / 86400000)
+  if (days < 30) return `${days}d`
+  return `${Math.round(days / 30)}mo`
+}
+
 onMounted(() => init())
 </script>
 
 <template>
-  <div class="animate-fade-in max-w-2xl mx-auto">
+  <!-- Main content -->
+  <div class="animate-fade-in max-w-2xl mx-auto pb-36">
     <!-- Breadcrumb -->
     <div class="flex items-center gap-2 mb-6 font-ui text-xs text-weapon-500 tracking-widest uppercase">
       <NuxtLink to="/" class="hover:text-frame-500 transition-colors flex items-center gap-1.5">
@@ -35,7 +49,7 @@ onMounted(() => init())
 
     <!-- Error -->
     <Transition name="error-slide">
-      <div v-if="error && !loading" class="flex items-start gap-2 bg-decal-600/20 border border-decal-500 px-4 py-3 mb-6">
+      <div v-if="error && !loading && !revealed" class="flex items-start gap-2 bg-decal-600/20 border border-decal-500 px-4 py-3 mb-6">
         <span class="w-1.5 h-1.5 bg-decal-500 mt-1.5 shrink-0 block" />
         <p class="font-ui text-decal-500 text-sm leading-snug">{{ error }}</p>
       </div>
@@ -95,7 +109,7 @@ onMounted(() => init())
 
       <!-- Flashcard -->
       <div
-        class="bg-armor-800 border border-armor-600 relative mb-6"
+        class="bg-armor-800 border border-armor-600 relative"
         style="clip-path: polygon(0 0, calc(100% - 1.5rem) 0, 100% 1.5rem, 100% 100%, 0 100%);"
       >
         <div class="absolute top-0 left-0 w-20 h-0.5 bg-frame-500" />
@@ -128,7 +142,7 @@ onMounted(() => init())
       </div>
 
       <!-- Reveal button -->
-      <div v-if="!revealed" class="flex justify-center">
+      <div v-if="!revealed" class="flex justify-center mt-6">
         <button
           class="font-mecha text-sm font-bold tracking-widest uppercase py-3 px-10 bg-armor-700 border border-armor-600 text-white hover:bg-frame-500 hover:text-armor-900 hover:border-frame-500 hover:shadow-glow-gold transition-all duration-200 active:scale-95 flex items-center gap-2"
           style="clip-path: polygon(0 0, calc(100% - 0.75rem) 0, 100% 0.75rem, 100% 100%, 0 100%);"
@@ -138,36 +152,6 @@ onMounted(() => init())
           Disengage Cover
         </button>
       </div>
-
-      <!-- Rating buttons -->
-      <div v-else class="space-y-3">
-        <p class="font-ui text-xs text-weapon-500 tracking-widest uppercase text-center">
-          Assess performance
-        </p>
-        <div class="grid grid-cols-4 gap-2">
-          <button
-            v-for="r in RATINGS"
-            :key="r.value"
-            :disabled="submitting"
-            class="font-mecha font-bold tracking-widest uppercase py-3 px-2 border transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex flex-col items-center gap-1"
-            :class="r.style"
-            style="clip-path: polygon(0 0, calc(100% - 0.5rem) 0, 100% 0.5rem, 100% 100%, 0 100%);"
-            @click="rate(r.value)"
-          >
-            <span v-if="submitting && r.value === 3" class="w-3 h-3 border border-current border-t-transparent animate-spin block" />
-            <span class="text-sm">{{ r.label }}</span>
-            <span class="text-xs opacity-60 font-ui normal-case tracking-normal">{{ r.sub }}</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Error during rating -->
-      <Transition name="error-slide">
-        <div v-if="error" class="flex items-start gap-2 bg-decal-600/20 border border-decal-500 px-4 py-3 mt-4">
-          <span class="w-1.5 h-1.5 bg-decal-500 mt-1.5 shrink-0 block" />
-          <p class="font-ui text-decal-500 text-sm leading-snug">{{ error }}</p>
-        </div>
-      </Transition>
     </div>
 
     <!-- No cards due -->
@@ -202,4 +186,51 @@ onMounted(() => init())
       </div>
     </div>
   </div>
+
+  <!-- Floating rating bar -->
+  <Transition name="modal-fade">
+    <div
+      v-if="revealed && currentCard && !isComplete"
+      class="fixed bottom-0 left-16 right-0 z-50 bg-armor-800 shadow-[0_-8px_32px_rgba(0,0,0,0.7)]"
+    >
+      <!-- Gold accent bar -->
+      <div class="h-px bg-gradient-to-r from-frame-700 via-frame-500 to-frame-700" />
+      <div class="border-t border-armor-600">
+        <div class="max-w-2xl mx-auto px-6 py-4">
+          <!-- Header row -->
+          <div class="flex items-center justify-between mb-3">
+            <span class="font-ui text-[10px] text-weapon-500 tracking-widest uppercase">Assess Performance</span>
+            <Transition name="error-slide">
+              <div v-if="error" class="flex items-center gap-1.5">
+                <span class="w-1 h-1 bg-decal-500 animate-pulse-decal block shrink-0" />
+                <span class="font-ui text-xs text-decal-500 truncate max-w-48">{{ error }}</span>
+              </div>
+            </Transition>
+          </div>
+
+          <!-- Rating buttons -->
+          <div class="grid grid-cols-4 gap-2">
+            <button
+              v-for="r in RATINGS"
+              :key="r.value"
+              :disabled="submitting"
+              class="flex flex-col items-center gap-0.5 py-3 px-2 border font-mecha tracking-widest uppercase transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              :class="r.style"
+              style="clip-path: polygon(0 0, calc(100% - 0.5rem) 0, 100% 0.5rem, 100% 100%, 0 100%);"
+              @click="rate(r.value)"
+            >
+              <span v-if="submitting" class="w-3 h-3 border border-current border-t-transparent animate-spin block mx-auto" />
+              <template v-else>
+                <span class="text-xs font-bold tracking-widest">{{ r.label }}</span>
+                <span class="font-ui text-[10px] opacity-60 normal-case tracking-normal">{{ r.sub }}</span>
+                <span class="font-mecha text-[10px] mt-1 opacity-80">
+                  {{ formatDue(scheduleMap[r.value]) }}
+                </span>
+              </template>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Transition>
 </template>
