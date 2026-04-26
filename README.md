@@ -2,6 +2,8 @@
 
 A Gundam-themed spaced repetition flashcard app inspired by the **Gundam Astray Gold Frame Amatsu Mina**. Built with Nuxt 4, Supabase, and the FSRS algorithm via `ts-fsrs`.
 
+![Memory Forge Demo](memor-forge.gif)
+
 ## Stack
 
 - **Framework**: Nuxt 4 (`compatibilityVersion: 4`)
