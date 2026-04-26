@@ -49,4 +49,36 @@
   --shadow-glow-gold: 0 0 10px rgba(212, 175, 55, 0.4), 0 0 20px rgba(212, 175, 55, 0.2);
   --shadow-glow-crimson: 0 0 12px rgba(194, 24, 7, 0.6);
   --shadow-glow-gunmetal: 0 0 15px rgba(92, 98, 122, 0.3);
+
+  /* Animations - generates animate-slide-up, animate-expand-x, etc. */
+  --animate-slide-up: slide-up 0.45s ease-out both;
+  --animate-expand-x: expand-x 0.5s ease-out both;
+  --animate-pulse-decal: pulse-decal 3s ease-in-out infinite;
+  --animate-fade-in: fade-in 0.3s ease-out both;
 }
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(1.25rem); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes expand-x {
+  from { transform: scaleX(0); transform-origin: left; }
+  to   { transform: scaleX(1); transform-origin: left; }
+}
+
+@keyframes pulse-decal {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Vue <Transition name="error-slide"> */
+.error-slide-enter-active { transition: opacity 0.2s ease-out, transform 0.2s ease-out; }
+.error-slide-leave-active { transition: opacity 0.15s ease-in, transform 0.15s ease-in; }
+.error-slide-enter-from  { opacity: 0; transform: translateY(-6px); }
+.error-slide-leave-to    { opacity: 0; transform: translateY(-4px); }

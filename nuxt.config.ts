@@ -13,17 +13,14 @@ export default defineNuxtConfig({
   imports: {
     dirs:['shared/schemas']
   },
-  css:[
-    '~/assets/css/tokens.css',
-    '~/assets/css/main.css'
-  ],
-  modules:['@nuxtjs/supabase', '@nuxt/icon'],
+  css:['~/assets/css/main.css'],
+  modules:['@nuxtjs/supabase', '@nuxt/icon', '@pinia/nuxt'],
   supabase: {
     redirectOptions: {
       login: '/login',
       callback: '/confirm',
-      exclude: ['/', '/register']
-    }
+      exclude: ['/register'],
+    },
   },
   app: {
     head: {
@@ -33,5 +30,8 @@ export default defineNuxtConfig({
         { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap' }
       ]
     }
+  },
+  alias: {
+    cookie: 'cookie-es',
   }
 })
