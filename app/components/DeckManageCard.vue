@@ -47,13 +47,20 @@ const confirming = ref(false)
     <div class="border-t border-armor-600 pt-4">
       <!-- Normal state -->
       <div v-if="!confirming" class="flex items-center gap-2">
+        <NuxtLink
+          :to="`/decks/${deck.id}/manage`"
+          class="flex-1 font-mecha text-xs font-bold tracking-widest uppercase py-2 px-3 bg-armor-700 border border-armor-600 text-white hover:bg-frame-500 hover:text-armor-900 hover:border-frame-500 hover:shadow-glow-gold transition-all duration-200 active:scale-95 flex items-center justify-center gap-2"
+          style="clip-path: polygon(0 0, calc(100% - 0.5rem) 0, 100% 0.5rem, 100% 100%, 0 100%);"
+        >
+          <Icon name="lucide:layers" class="w-3.5 h-3.5" />
+          Manage Cards
+        </NuxtLink>
         <button
-          class="flex-1 font-mecha text-xs font-bold tracking-widest uppercase py-2 px-3 bg-armor-700 border border-armor-600 text-weapon-400 hover:bg-frame-500 hover:text-armor-900 hover:border-frame-500 hover:shadow-glow-gold transition-all duration-200 active:scale-95 flex items-center justify-center gap-2"
+          class="font-mecha text-xs font-bold tracking-widest uppercase py-2 px-3 bg-armor-700 border border-armor-600 text-weapon-400 hover:bg-frame-500 hover:text-armor-900 hover:border-frame-500 hover:shadow-glow-gold transition-all duration-200 active:scale-95 flex items-center gap-2"
           style="clip-path: polygon(0 0, calc(100% - 0.5rem) 0, 100% 0.5rem, 100% 100%, 0 100%);"
           @click="emit('edit', deck)"
         >
           <Icon name="lucide:pencil" class="w-3.5 h-3.5" />
-          Update Intel
         </button>
         <button
           class="font-mecha text-xs font-bold tracking-widest uppercase py-2 px-3 bg-armor-700 border border-armor-600 text-weapon-400 hover:bg-decal-600/30 hover:border-decal-500 hover:text-decal-500 transition-all duration-200 active:scale-95 flex items-center gap-2"

@@ -87,6 +87,12 @@
 .modal-panel-leave-active { transition: opacity 0.15s ease-in, transform 0.15s ease-in; }
 .modal-panel-enter-from, .modal-panel-leave-to { opacity: 0; transform: translateY(12px); }
 
+/* Vue <Transition name="card-reveal"> — flashcard back reveal */
+.card-reveal-enter-active { transition: opacity 0.25s ease-out, transform 0.25s ease-out; }
+.card-reveal-leave-active { transition: opacity 0.15s ease-in; }
+.card-reveal-enter-from  { opacity: 0; transform: translateY(10px); }
+.card-reveal-leave-to    { opacity: 0; }
+
 /* Vue <Transition name="error-slide"> */
 .error-slide-enter-active { transition: opacity 0.2s ease-out, transform 0.2s ease-out; }
 .error-slide-leave-active { transition: opacity 0.15s ease-in, transform 0.15s ease-in; }
