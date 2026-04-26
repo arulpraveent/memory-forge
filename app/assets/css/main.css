@@ -77,6 +77,16 @@
   to   { opacity: 1; }
 }
 
+/* Vue <Transition name="modal-fade"> — backdrop */
+.modal-fade-enter-active { transition: opacity 0.2s ease-out; }
+.modal-fade-leave-active { transition: opacity 0.15s ease-in; }
+.modal-fade-enter-from, .modal-fade-leave-to { opacity: 0; }
+
+/* Vue <Transition name="modal-panel"> — panel slide-up */
+.modal-panel-enter-active { transition: opacity 0.2s ease-out, transform 0.2s ease-out; }
+.modal-panel-leave-active { transition: opacity 0.15s ease-in, transform 0.15s ease-in; }
+.modal-panel-enter-from, .modal-panel-leave-to { opacity: 0; transform: translateY(12px); }
+
 /* Vue <Transition name="error-slide"> */
 .error-slide-enter-active { transition: opacity 0.2s ease-out, transform 0.2s ease-out; }
 .error-slide-leave-active { transition: opacity 0.15s ease-in, transform 0.15s ease-in; }
