@@ -80,6 +80,30 @@ Memory-Forge/
   - Use Vue's `<Transition name="error-slide">` (CSS defined in `main.css`) for conditionally rendered elements like error banners — never use `v-show` animations with raw CSS on `v-if` blocks without a `<Transition>` wrapper.
   - Buttons get `active:scale-95` for tactile press feedback.
 - **Custom Components**: Build all UI components from scratch as Vue SFCs inside `app/components/`. No third-party component libraries. All styling via Tailwind utility classes and the design tokens in `main.css`.
+- **Gundam-Themed Copy**: All user-facing text — placeholders, labels, loading messages, empty states, and button labels — must use Gundam / military-operations vocabulary (e.g. "Module Designation", "Briefing", "Deploy Module", "Decommission", "No data modules detected."). Generic error fallback: "An unexpected error occurred. Please try again."
+- **Check Previous Components First**: When in doubt about UI patterns, spacing, or clip-path values, read existing pages/components (`app/pages/`, `app/components/`) before writing new ones to maintain visual consistency.
+
+## Security
+- **Supabase RLS**: EVERY table MUST have RLS enabled with strict policies. Users can only read, update, and delete their own rows (verified via `auth.uid()`).
+- **Nitro API Validation**: All incoming requests to `server/api/*` MUST validate `body` and `query` params using Zod schemas from `@shared/schemas`. Never trust frontend data.
+- **Authentication Check**: Frontend route protection is handled via Supabase auth middleware, but Nitro routes MUST independently verify the session via `serverSupabaseUser(event)` before fulfilling any restricted request.
+- **Preventing XSS**: Avoid `v-html` entirely. If rendering formatted/markdown text, sanitize through DOMPurify or Nuxt MDC before rendering. Default to `{{ }}` interpolation.
+- **Secret Management**: Backend-only secrets go in the root `runtimeConfig` only. Only browser-safe values (public Supabase URL/key) go in `runtimeConfig.public`.
+
+## Testing
+- **Framework & Tools**: We use **Vitest** alongside **@nuxt/test-utils** for testing. Server route unit tests use plain Vitest (`environment: 'node'`). Frontend component/composable tests use `@nuxt/test-utils` with `environment: 'nuxt'` and `@vue/test-utils` for mounting.
+- **File Location**: Co-locate test files next to the files they test using the `.spec.ts` suffix (e.g., `app/components/DeckCard.spec.ts`, `server/api/decks/index.get.spec.ts`).
+- **Vitest Config**: `vitest.config.ts` at the project root. Uses `environmentMatchGlobs` to apply `nuxt` env for `app/**` and `node` env for `server/**`. Alias `#supabase/server` → `tests/__mocks__/supabase-server.ts`.
+- **Nuxt 4 Mocking Utilities**:
+  - Use `mockNuxtImport()` for mocking auto-imported composables (e.g. `useSupabaseClient`) in frontend tests.
+  - Use `registerEndpoint()` to mock Nitro API routes in frontend/composable tests.
+  - Use `vi.stubGlobal()` to override Nitro auto-import globals (`getRouterParam`, `readBody`) in server route tests.
+- **Core Testing Priorities**:
+  - **Nitro Backend**: Unit test all route handlers — success responses, 401 unauthenticated, 422 validation errors, 404 not found, 500 DB errors.
+  - **Pinia Stores**: Validate state transitions, data mapping, and actions.
+  - **Components & Composables**: Focus on emitted events, loading/error state surfacing, and computed UI variations.
+- **Mocking Rule**: ALWAYS mock the database and network calls. Never hit the live Supabase instance during tests.
+- **Global Setup**: `tests/vitest.setup.ts` assigns h3 functions (`defineEventHandler`, `createError`, `getRouterParam`, `readBody`) to `globalThis` to simulate Nitro auto-imports in the Node test environment.
 
 ## Git & Workflow
 - **Initial Sync**: Before starting any task, always run `git pull origin main`.

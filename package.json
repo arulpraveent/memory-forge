@@ -7,7 +7,9 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@nuxt/icon": "^2.2.1",
@@ -17,9 +19,14 @@
     "nuxt": "^4.4.2",
     "pinia": "^3.0.4",
     "vue": "^3.5.32",
-    "vue-router": "^5.0.4"
+    "vue-router": "^5.0.4",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@nuxt/kit": "^4.4.2"
+    "@nuxt/kit": "^4.4.2",
+    "@nuxt/test-utils": "^3.19.1",
+    "@vue/test-utils": "^2.4.8",
+    "happy-dom": "^17.6.3",
+    "vitest": "^3.2.4"
   }
 }

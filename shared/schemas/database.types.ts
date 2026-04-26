@@ -14,6 +14,98 @@ export type Database = {
   }
   public: {
     Tables: {
+      cards: {
+        Row: {
+          back: string
+          created_at: string
+          deck_id: string
+          difficulty: number
+          due: string
+          elapsed_days: number
+          front: string
+          id: string
+          lapses: number
+          last_review: string | null
+          reps: number
+          scheduled_days: number
+          stability: number
+          state: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          back: string
+          created_at?: string
+          deck_id: string
+          difficulty: number
+          due: string
+          elapsed_days: number
+          front: string
+          id?: string
+          lapses: number
+          last_review?: string | null
+          reps: number
+          scheduled_days: number
+          stability: number
+          state: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          back?: string
+          created_at?: string
+          deck_id?: string
+          difficulty?: number
+          due?: string
+          elapsed_days?: number
+          front?: string
+          id?: string
+          lapses?: number
+          last_review?: string | null
+          reps?: number
+          scheduled_days?: number
+          stability?: number
+          state?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cards_deck_id_fkey"
+            columns: ["deck_id"]
+            isOneToOne: false
+            referencedRelation: "decks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      decks: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           display_name: string
@@ -31,6 +123,65 @@ export type Database = {
           id?: string
         }
         Relationships: []
+      }
+      review_logs: {
+        Row: {
+          card_id: string
+          catch_up: number | null
+          created_at: string
+          difficulty: number
+          due: string
+          elapsed_days: number
+          id: string
+          last_elapsed_days: number
+          rating: number
+          review: string
+          scheduled_days: number
+          stability: number
+          state: number
+          user_id: string
+        }
+        Insert: {
+          card_id: string
+          catch_up?: number | null
+          created_at?: string
+          difficulty: number
+          due: string
+          elapsed_days: number
+          id?: string
+          last_elapsed_days: number
+          rating: number
+          review: string
+          scheduled_days: number
+          stability: number
+          state: number
+          user_id: string
+        }
+        Update: {
+          card_id?: string
+          catch_up?: number | null
+          created_at?: string
+          difficulty?: number
+          due?: string
+          elapsed_days?: number
+          id?: string
+          last_elapsed_days?: number
+          rating?: number
+          review?: string
+          scheduled_days?: number
+          stability?: number
+          state?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_logs_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

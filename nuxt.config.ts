@@ -33,5 +33,11 @@ export default defineNuxtConfig({
   },
   alias: {
     cookie: 'cookie-es',
-  }
+  },
+  runtimeConfig: {
+    // Backend-only secrets go here (never in runtimeConfig.public)
+    public: {
+      // Only browser-safe values here — Supabase URL/key are managed by @nuxtjs/supabase
+    },
+  },
 })
