@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
   const client = await serverSupabaseClient<Database>(event)
   const { data, error } = await client
     .from('decks')
-    .insert({ ...result.data, user_id: user.id })
+    .insert({ ...result.data, user_id: user.sub })
     .select()
     .single()
 

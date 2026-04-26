@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from 'vitest
 import { serverSupabaseUser, serverSupabaseClient } from '#supabase/server'
 import handler from './index.post'
 
-const mockUser = { id: 'user-1' }
+const mockUser = { sub: 'user-1' }
 
 const mockCreatedDeck = {
   id: 'deck-1',
