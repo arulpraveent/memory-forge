@@ -70,4 +70,4 @@ SUPABASE_KEY=your-anon-public-key
 
 ---
 
-*Built by Arul Praveen T in collaboration with [Claude Code](https://claude.ai/code) (Anthropic).*
+*Built by Arul Praveen T in collaboration with [Claude Code](https://claude.ai/code) — powered by **claude-sonnet-4-6** (Anthropic).*
