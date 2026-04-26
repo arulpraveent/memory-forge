@@ -32,42 +32,15 @@ async function handleLogout() {
 
 <template>
   <div class="min-h-screen bg-armor-900 flex flex-col">
-    <!-- Header -->
-    <header class="bg-armor-800 border-b border-armor-600 sticky top-0 z-40">
-      <div class="h-0.5 bg-frame-500 animate-expand-x" style="clip-path: polygon(0 0, calc(100% - 2rem) 0, 100% 100%, 0 100%);" />
+    <!-- Header — exactly 3 items -->
+    <header class="h-16 bg-armor-800 border-b border-armor-600 sticky top-0 z-40 flex flex-col">
+      <div class="h-0.5 bg-frame-500 animate-expand-x shrink-0" style="clip-path: polygon(0 0, calc(100% - 2rem) 0, 100% 100%, 0 100%);" />
 
-      <div class="flex items-center justify-between px-6 py-4">
+      <div class="flex-1 flex items-center justify-between px-4">
         <!-- Logo -->
-        <NuxtLink to="/" class="font-mecha text-xl font-bold text-frame-500 tracking-widest uppercase hover:text-frame-300 transition-colors">
+        <NuxtLink to="/" class="font-mecha text-lg font-bold text-frame-500 tracking-widest uppercase hover:text-frame-300 transition-colors">
           Memory Forge
         </NuxtLink>
-
-        <!-- Nav -->
-        <nav class="flex items-center gap-1">
-          <NuxtLink
-            to="/"
-            class="font-ui text-xs tracking-widest uppercase px-4 py-2 transition-colors"
-            :class="route.path === '/' ? 'text-frame-500' : 'text-weapon-400 hover:text-white'"
-          >
-            <span class="flex items-center gap-2">
-              <Icon name="lucide:crosshair" class="w-3.5 h-3.5" />
-              Sortie
-            </span>
-          </NuxtLink>
-
-          <div class="w-px h-4 bg-armor-600" />
-
-          <NuxtLink
-            to="/decks"
-            class="font-ui text-xs tracking-widest uppercase px-4 py-2 transition-colors"
-            :class="route.path.startsWith('/decks') ? 'text-frame-500' : 'text-weapon-400 hover:text-white'"
-          >
-            <span class="flex items-center gap-2">
-              <Icon name="lucide:layout-grid" class="w-3.5 h-3.5" />
-              Hangar
-            </span>
-          </NuxtLink>
-        </nav>
 
         <!-- Pilot Callsign -->
         <DisplayName v-if="displayName" :name="displayName" />
@@ -86,9 +59,46 @@ async function handleLogout() {
       </div>
     </header>
 
-    <!-- Page content -->
-    <main class="flex-1 px-6 py-8 max-w-7xl mx-auto w-full">
-      <slot />
-    </main>
+    <!-- Body -->
+    <div class="flex flex-1">
+      <!-- Side nav -->
+      <aside class="w-16 shrink-0 bg-armor-800 border-r border-armor-600 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto z-30 flex flex-col">
+        <nav class="flex flex-col py-3 gap-0.5">
+          <NuxtLink
+            to="/"
+            title="Sortie"
+            class="flex flex-col items-center py-4 gap-1 relative transition-all duration-200"
+            :class="route.path === '/' ? 'text-frame-500 bg-frame-500/5' : 'text-weapon-500 hover:text-weapon-400 hover:bg-armor-700'"
+          >
+            <span v-if="route.path === '/'" class="absolute left-0 inset-y-0 w-0.5 bg-frame-500 animate-expand-x" style="transform-origin: top;" />
+            <Icon name="lucide:crosshair" class="w-4 h-4" />
+            <span class="font-mecha text-[9px] tracking-widest uppercase">Sortie</span>
+          </NuxtLink>
+
+          <NuxtLink
+            to="/decks"
+            title="Hangar"
+            class="flex flex-col items-center py-4 gap-1 relative transition-all duration-200"
+            :class="route.path.startsWith('/decks') ? 'text-frame-500 bg-frame-500/5' : 'text-weapon-500 hover:text-weapon-400 hover:bg-armor-700'"
+          >
+            <span v-if="route.path.startsWith('/decks')" class="absolute left-0 inset-y-0 w-0.5 bg-frame-500 animate-expand-x" style="transform-origin: top;" />
+            <Icon name="lucide:layout-grid" class="w-4 h-4" />
+            <span class="font-mecha text-[9px] tracking-widest uppercase">Hangar</span>
+          </NuxtLink>
+        </nav>
+
+        <!-- Bottom decal -->
+        <div class="mt-auto p-3 flex justify-center">
+          <span class="w-1.5 h-1.5 bg-decal-500/40 block animate-pulse-decal" />
+        </div>
+      </aside>
+
+      <!-- Page content -->
+      <main class="flex-1 px-6 py-8">
+        <div class="max-w-7xl mx-auto">
+          <slot />
+        </div>
+      </main>
+    </div>
   </div>
 </template>

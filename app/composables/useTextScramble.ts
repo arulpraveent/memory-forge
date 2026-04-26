@@ -2,11 +2,9 @@ const GLYPHS = '!<>-_\\/[]{}=+*^?#0123456789ABCDEF▓▒░█'
 const FRAME_MS = 28
 const STEPS_PER_CHAR = 5
 
-export function useTextScramble(target: Ref<string>, repeatEvery = 9000) {
+export function useTextScramble(target: Ref<string>) {
   const display = ref(target.value)
-
   let frameTimer: ReturnType<typeof setInterval> | null = null
-  let repeatTimer: ReturnType<typeof setInterval> | null = null
 
   function randomGlyph() {
     return GLYPHS[Math.floor(Math.random() * GLYPHS.length)]!
@@ -37,7 +35,6 @@ export function useTextScramble(target: Ref<string>, repeatEvery = 9000) {
 
   function stop() {
     if (frameTimer) clearInterval(frameTimer)
-    if (repeatTimer) clearInterval(repeatTimer)
   }
 
   function trigger() {
@@ -48,7 +45,6 @@ export function useTextScramble(target: Ref<string>, repeatEvery = 9000) {
     watch(target, (text) => {
       stop()
       scrambleTo(text)
-      repeatTimer = setInterval(() => scrambleTo(text), repeatEvery)
     }, { immediate: true })
 
     onUnmounted(stop)
