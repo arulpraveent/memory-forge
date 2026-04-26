@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { flushPromises } from '@vue/test-utils'
 import { setActivePinia, createPinia } from 'pinia'
 import { mockNuxtImport } from '@nuxt/test-utils/runtime'
 import { useReview } from './useReview'
@@ -395,8 +396,13 @@ describe('useReview', () => {
     it('clears a previous error before each new rating attempt', async () => {
       storeDueCards = mockCards
       mockFetchDueCards.mockResolvedValue(undefined)
-      mockFetch.mockRejectedValueOnce(new Error('First failure'))
-      mockFetch.mockResolvedValue({})
+      // reveal() fires a non-blocking schedule fetch before rate() fires the review fetch,
+      // so we must account for that extra call to keep the rejection on the review fetch.
+      mockFetch
+        .mockResolvedValueOnce({})               // schedule fetch (reveal 1)
+        .mockRejectedValueOnce(new Error('First failure'))  // review fetch 1 → triggers error
+        .mockResolvedValueOnce({})               // schedule fetch (reveal 2)
+        .mockResolvedValue({})                   // review fetch 2 → clears error
       const { init, reveal, rate, error } = useReview('deck-1')
 
       await init()
@@ -408,6 +414,99 @@ describe('useReview', () => {
       await rate(3)
 
       expect(error.value).toBe('')
+    })
+  })
+
+  describe('scheduleMap', () => {
+    const scheduleData = {
+      1: '2024-01-01T00:10:00.000Z',
+      2: '2024-01-02T00:00:00.000Z',
+      3: '2024-01-08T00:00:00.000Z',
+      4: '2024-01-31T00:00:00.000Z',
+    }
+
+    it('starts as an empty object', () => {
+      const { scheduleMap } = useReview('deck-1')
+      expect(scheduleMap.value).toEqual({})
+    })
+
+    it('calls the schedule endpoint immediately when reveal() is called with a current card', async () => {
+      storeDueCards = mockCards
+      mockFetchDueCards.mockResolvedValue(undefined)
+      mockFetch.mockResolvedValue(scheduleData)
+      const { init, reveal } = useReview('deck-1')
+
+      await init()
+      reveal()
+
+      // $fetch is called synchronously inside fetchSchedule before its first await
+      expect(mockFetch).toHaveBeenCalledWith('/api/cards/card-1/schedule')
+    })
+
+    it('does not call the schedule endpoint when reveal() is called with no current card', () => {
+      const { reveal } = useReview('deck-1')
+
+      reveal()
+
+      expect(mockFetch).not.toHaveBeenCalled()
+    })
+
+    it('populates scheduleMap with the endpoint response after reveal', async () => {
+      storeDueCards = mockCards
+      mockFetchDueCards.mockResolvedValue(undefined)
+      mockFetch.mockResolvedValue(scheduleData)
+      const { init, reveal, scheduleMap } = useReview('deck-1')
+
+      await init()
+      reveal()
+      await flushPromises()
+
+      expect(scheduleMap.value).toEqual(scheduleData)
+    })
+
+    it('silently falls back to {} when the schedule fetch fails', async () => {
+      storeDueCards = mockCards
+      mockFetchDueCards.mockResolvedValue(undefined)
+      mockFetch.mockRejectedValue(new Error('Network error'))
+      const { init, reveal, scheduleMap } = useReview('deck-1')
+
+      await init()
+      reveal()
+      await flushPromises()
+
+      expect(scheduleMap.value).toEqual({})
+    })
+
+    it('clears scheduleMap after a successful rate()', async () => {
+      storeDueCards = mockCards
+      mockFetchDueCards.mockResolvedValue(undefined)
+      mockFetch.mockResolvedValue(scheduleData)
+      const { init, reveal, rate, scheduleMap } = useReview('deck-1')
+
+      await init()
+      reveal()
+      await flushPromises()
+      expect(scheduleMap.value).toEqual(scheduleData)
+
+      await rate(3)
+
+      expect(scheduleMap.value).toEqual({})
+    })
+
+    it('clears scheduleMap when init() is called', async () => {
+      storeDueCards = mockCards
+      mockFetchDueCards.mockResolvedValue(undefined)
+      mockFetch.mockResolvedValue(scheduleData)
+      const { init, reveal, scheduleMap } = useReview('deck-1')
+
+      await init()
+      reveal()
+      await flushPromises()
+      expect(scheduleMap.value).toEqual(scheduleData)
+
+      await init()
+
+      expect(scheduleMap.value).toEqual({})
     })
   })
 })
