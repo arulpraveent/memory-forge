@@ -38,14 +38,13 @@ defineProps<{
     </div>
 
     <!-- Action -->
-    <button
-      disabled
-      class="w-full font-mecha text-xs font-bold tracking-widest uppercase py-2.5 px-4 bg-armor-700 border border-armor-600 text-weapon-500 cursor-not-allowed opacity-60 flex items-center justify-center gap-2"
+    <NuxtLink
+      :to="`/decks/${deck.id}/review`"
+      class="w-full font-mecha text-xs font-bold tracking-widest uppercase py-2.5 px-4 bg-armor-700 border border-armor-600 text-white hover:bg-frame-500 hover:text-armor-900 hover:border-frame-500 hover:shadow-glow-gold transition-all duration-200 active:scale-95 flex items-center justify-center gap-2"
       style="clip-path: polygon(0 0, calc(100% - 0.75rem) 0, 100% 0.75rem, 100% 100%, 0 100%);"
-      title="Study sessions coming in a future update"
     >
       <Icon name="lucide:play" class="w-3.5 h-3.5" />
       Begin Sortie
-    </button>
+    </NuxtLink>
   </div>
 </template>
