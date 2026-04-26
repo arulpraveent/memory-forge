@@ -15,8 +15,9 @@ A Gundam-themed spaced repetition flashcard app inspired by the **Gundam Astray 
 
 - **Decks** — create, edit, and decommission flashcard modules
 - **Cards** — deploy data cards (front/back) into any deck
-- **Review flow** — step-through sortie with FSRS-powered scheduling; rates: Abort / Challenging / Confirmed / Optimal
+- **Review flow** — step-through sortie with FSRS-powered scheduling; floating rating bar shows projected next-review time per rating (Abort / Challenging / Confirmed / Optimal)
 - **Sortie dashboard** — home page shows only decks with cards currently due
+- **Pilot callsign** — Gundam-themed display name generated from `data/names.json`; holographic scramble animation in the header
 
 ## Routes
 
@@ -35,12 +36,13 @@ Memory-Forge/
 │   ├── assets/css/main.css   # Design tokens (@theme), all Tailwind config
 │   ├── components/
 │   ├── composables/
+│   ├── data/names.json       # Gundam name lists for display-name generation
 │   ├── pages/
 │   │   └── decks/[id]/       # manage.vue, review.vue
 │   └── stores/
 ├── server/api/
 │   ├── decks/                # CRUD + due endpoint
-│   └── cards/                # CRUD + due + [id]/review
+│   └── cards/                # CRUD + due + [id]/{review, schedule}
 ├── shared/schemas/           # Supabase TS types + Zod schemas
 └── nuxt.config.ts
 ```
