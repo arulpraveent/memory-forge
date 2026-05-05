@@ -1,4 +1,4 @@
-# [Memory Forge]((https://fiveleafclover.inksigma.com/that-time-i-tried-vibe-coding-and-everything-somehow-worked-anyway))
+# [Memory Forge](https://fiveleafclover.inksigma.com/that-time-i-tried-vibe-coding-and-everything-somehow-worked-anyway)
 
 A Gundam-themed spaced repetition flashcard app inspired by the **Gundam Astray Gold Frame Amatsu Mina**. Built with Nuxt 4, Supabase, and the FSRS algorithm via `ts-fsrs`.
 
